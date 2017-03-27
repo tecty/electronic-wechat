@@ -1,7 +1,6 @@
 'use strict';
 
 const { remote, shell, ipcRenderer } = require('electron');
-const path = require('path');
 const AppConfig = require('../configuration');
 
 const { Menu, app } = remote;
@@ -109,6 +108,16 @@ class MenuHandler {
             accelerator: 'Command+A',
             selector: 'selectAll:',
           },
+          {
+            type: 'separator',
+          },
+          {
+            label: Common.MENU.searchContacts,
+            accelerator: 'Command+F',
+            click: () => {
+              $('#search_bar input')[0].focus();
+            },
+          },
         ],
       },
       {
@@ -138,6 +147,15 @@ class MenuHandler {
             label: Common.MENU.close,
             accelerator: 'Command+W',
             selector: 'performClose:',
+          },
+          {
+            label: Common.MENU.toggleFullScreen,
+            accelerator: 'Ctrl+Command+F',
+            click: (item, focusedWindow) => {
+              if (focusedWindow) {
+                focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+              }
+            },
           },
           {
             type: 'separator',
@@ -171,14 +189,37 @@ class MenuHandler {
         label: Common.MENU.window,
         submenu: [
           {
+            label: Common.MENU.pref,
+            click: MenuHandler._preference,
+          },
+          {
             label: Common.MENU.reload,
             accelerator: 'Ctrl+R',
-            click: () => MenuHandler._reload,
+            click: MenuHandler._reload,
+          },
+          {
+            label: Common.MENU.toggleFullScreen,
+            accelerator: 'F11',
+            click: (item, focusedWindow) => {
+              if (focusedWindow) {
+                focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+              }
+            },
+          },
+          {
+            type: 'separator',
+          },
+          {
+            label: Common.MENU.searchContacts,
+            accelerator: 'Ctrl+F',
+            click: () => {
+              $('#search_bar input')[0].focus();
+            },
           },
           {
             label: Common.MENU.devtool,
             accelerator: 'Ctrl+Shift+I',
-            click: () => MenuHandler._devTools,
+            click: MenuHandler._devTools,
           },
           {
             type: 'separator',
@@ -186,7 +227,7 @@ class MenuHandler {
           {
             label: Common.MENU.quit,
             accelerator: 'Ctrl+Q',
-            click: () => MenuHandler._quitApp,
+            click: MenuHandler._quitApp,
           },
         ],
       },

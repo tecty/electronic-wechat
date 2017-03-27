@@ -1,12 +1,15 @@
 'use strict';
+
 const { ipcRenderer, webFrame } = require('electron');
 const MenuHandler = require('../handlers/menu');
 const ShareMenu = require('./share_menu');
 const MentionMenu = require('./mention_menu');
 const BadgeCount = require('./badge_count');
 const Common = require('../common');
-const AppConfig = require('../configuration');
+// const EmojiParser = require('./emoji_parser');
+// const emojione = require('emojione');
 
+const AppConfig = require('../configuration');
 
 class Injector {
   init() {
@@ -15,6 +18,8 @@ class Injector {
     }
     this.initInjectBundle();
     this.initAngularInjection();
+    this.lastUser = null;
+    this.initIPC();
     webFrame.setZoomLevelLimits(1, 1);
 
     new MenuHandler().create();
@@ -93,6 +98,9 @@ class Injector {
     if (!(value.AddMsgList instanceof Array)) return value;
     value.AddMsgList.forEach((msg) => {
       switch (msg.MsgType) {
+        // case constants.MSGTYPE_TEXT:
+        //   msg.Content = EmojiParser.emojiToImage(msg.Content);
+        //   break;
         case constants.MSGTYPE_EMOTICON:
           Injector.lock(msg, 'MMDigest', '[Emoticon]');
           Injector.lock(msg, 'MsgType', constants.MSGTYPE_EMOTICON);
@@ -123,6 +131,20 @@ class Injector {
       value = value.replace(messageBoxKeydownReg, 'editAreaKeydown($event);mentionMenu($event);');
     }
     return value;
+  }
+
+  initIPC() {
+    // clear currentUser to receive reddot of new messages from the current chat user
+    ipcRenderer.on('hide-wechat-window', () => {
+      this.lastUser = angular.element('#chatArea').scope().currentUser;
+      angular.element('.chat_list').scope().itemClick("");
+    });
+    // recover to the last chat user
+    ipcRenderer.on('show-wechat-window', () => {
+      if (this.lastUser != null) {
+        angular.element('.chat_list').scope().itemClick(this.lastUser);
+      }
+    });
   }
 }
 

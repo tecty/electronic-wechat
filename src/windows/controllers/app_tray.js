@@ -1,13 +1,23 @@
 /**
  * Created by Zhongyi on 5/2/16.
  */
+
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const { app, Menu, nativeImage, Tray } = require('electron');
 
-const Common = require('../../common');
+const AppConfig = require('../../configuration');
+
+const lan = AppConfig.readSettings('language');
+
+let Common;
+if (lan === 'zh-CN') {
+  Common = require('../../common_cn');
+} else {
+  Common = require('../../common');
+}
 
 class AppTray {
   constructor(splashWindow, wechatWindow) {
@@ -29,7 +39,7 @@ class AppTray {
 
   createTray() {
     let image;
-    if (process.platform === 'linux') {
+    if (process.platform === 'linux' || process.platform === 'win32') {
       image = nativeImage.createFromPath(path.join(__dirname, `../../../assets/tray_${this.trayColor}.png`));
       this.trayIcon = image;
       this.trayIconUnread = nativeImage.createFromPath(path.join(__dirname, `../../../assets/tray_unread_${this.trayColor}.png`));
@@ -41,7 +51,7 @@ class AppTray {
     this.tray = new Tray(image);
     this.tray.setToolTip(Common.ELECTRONIC_WECHAT);
 
-    if (process.platform === 'linux') {
+    if (process.platform === 'linux' || process.platform === 'win32') {
       const contextMenu = Menu.buildFromTemplate([
         { label: 'ChangeIconColor', click: () => this.changeIconColor() },
         { label: 'Show', click: () => this.hideSplashAndShowWeChat() },

@@ -80,6 +80,8 @@ Common.MENU = {
   selectAll: '选择全部',
   view: '视图',
   reload: '重新加载当前窗口',
+  toggleFullScreen:'切换全屏',
+  searchContacts:'搜索联系人',
   devtool: '开发者工具',
   window: '窗口',
   min: '最小化',
@@ -87,7 +89,7 @@ Common.MENU = {
   allFront: '全部打开',
   help: '帮助',
   repo: 'GitHub 目录',
-  feedback: '反馈',
+  feedback: '联系我们',
   checkRelease: '检查更新',
 };
 

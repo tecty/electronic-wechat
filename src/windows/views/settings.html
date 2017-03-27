@@ -14,14 +14,14 @@
     </div>
     <div class="top-bar-right">
       <button type="button" class="upgrade-btn" id="upgrade-btn" onclick="upgrade()">检查更新</button>
-      <button type="button" class="upgrade-btn" id="feedback-btn" onclick="feedback()">反馈</button>
+      <button type="button" class="upgrade-btn" id="feedback-btn" onclick="feedback()">联系我们</button>
     </div>
     <div class="top-bar-middle">
       <ul class="title-list">
         <li>
           <h1>Electronic Wechat V2.0.0</h1></li>
         <li>
-          <h1 style="font-size:95%;">Powered by Electron V1.3.5</h1></li>
+          <h1 style="font-size:95%;">Powered by Electron V1.4.7</h1></li>
       </ul>
     </div>
   </div>
@@ -61,6 +61,22 @@
     <section>
       <ul>
         <li class="menu-title">
+          <h3 id="app-instance-title">是否允许开启多个实例</h3>
+        </li>
+        <li class="menu-desc">
+          <h4 id="app-instance-desc">多个实例可以同时登录不同帐号</h4>
+        </li>
+        <li class="menu-button">
+          <select id="app-instance-select">
+            <option value="on">On</option>
+            <option value="off">Off</option>
+          </select>
+        </li>
+      </ul>
+    </section>
+    <section>
+      <ul>
+        <li class="menu-title">
           <h3 id="app-icon-title">Flash 路径 (即将上线)</h3>
         </li>
         <li class="menu-desc">
@@ -83,10 +99,16 @@
 
     const lan = AppConfig.readSettings('language');
     const recall = AppConfig.readSettings('prevent-recall');
+    const instance = AppConfig.readSettings('multi-instance');
     const icon = AppConfig.readSettings('icon');
 
-    const lanSelect = document.getElementById('app-language-select');
-    const recallSelect = document.getElementById('app-recall-select');
+    const lanSelect = $('app-language-select');
+    const recallSelect = $('app-recall-select');
+    const instanceSelect = $('app-instance-select');
+
+    function $(id) {
+      return document.getElementById(id);
+    }
 
     setConfig();
     setListeners()
@@ -106,22 +128,28 @@
       recallSelect.addEventListener('change', function() {
         AppConfig.saveSettings('prevent-recall', recallSelect.value)
       })
+      instanceSelect.addEventListener('change', function() {
+        AppConfig.saveSettings('multi-instance', instanceSelect.value)
+      })
     }
 
     function setConfig() {
-      document.getElementById('app-language-select').value = lan;
-      document.getElementById('app-recall-select').value = recall;
+      $('app-language-select').value = lan;
+      $('app-recall-select').value = recall;
+      $('app-instance-select').value = instance;
     }
 
     function setLocale() {
-      document.getElementById('app-language-title').innerHTML = Common.languageTitle;
-      document.getElementById('app-language-desc').innerHTML = Common.languageDesc;
-      document.getElementById('app-recall-title').innerHTML = Common.recallTitle;
-      document.getElementById('app-recall-desc').innerHTML = Common.recallDesc;
-      document.getElementById('app-icon-title').innerHTML = Common.iconTitle;
-      document.getElementById('app-icon-desc').innerHTML = Common.iconDesc;
-      document.getElementById('upgrade-btn').innerHTML = Common.UPGRADE;
-      document.getElementById('feedback-btn').innerHTML = Common.FEEDBACK;
+      $('app-language-title').innerHTML = Common.languageTitle;
+      $('app-language-desc').innerHTML = Common.languageDesc;
+      $('app-recall-title').innerHTML = Common.recallTitle;
+      $('app-recall-desc').innerHTML = Common.recallDesc;
+      $('app-instance-title').innerHTML = Common.instanceTitle;
+      $('app-instance-desc').innerHTML = Common.instanceDesc;
+      $('app-icon-title').innerHTML = Common.iconTitle;
+      $('app-icon-desc').innerHTML = Common.iconDesc;
+      $('upgrade-btn').innerHTML = Common.UPGRADE;
+      $('feedback-btn').innerHTML = Common.FEEDBACK;
     }
 
     function feedback() {
@@ -135,6 +163,7 @@
     function KeyDownFn(evt) {
       if (evt.keyCode == 73 && evt.ctrlKey && evt.shiftKey) evt.preventDefault();
     }
+
   </script>
 </body>
 
